@@ -47,7 +47,6 @@ module Jekyll
 
     def build_documents(site, config)
       documents = []
-      index_name = config['index_name'] || 'jekyll_documents'
       collections_config = config['collections'] || { 'posts' => { 'fields' => ['title', 'content', 'url', 'date'] } }
 
       collections_config.each do |collection_name, collection_settings|
@@ -155,9 +154,15 @@ module Jekyll
           "indexing documents"
         )
         if response&.code == 202
-          task = JSON.parse(response.body)
-          log_info("Task queued: UID #{task['taskUid']}. Check status at #{url}/tasks/#{task['taskUid']}")
-        elsif response
+          if response.body
+            task = JSON.parse(response.body)
+            log_info("Task queued: UID #{task['taskUid']}. Check status at #{url}/tasks/#{task['taskUid']}")
+          else
+            log_info("Task queued (202), but no response body received.")
+          end
+        elsif response.nil?
+          log_info("Failed to queue indexing task: No response received from Meilisearch.")
+        else
           log_info("Failed to queue indexing task: #{response.code} - #{response.body}")
         end
       end
@@ -191,7 +196,11 @@ module Jekyll
         "resetting index"
       )
       unless response&.success? || response&.code == 404
-        log_info("Failed to reset index: #{response.code} - #{response.body}")
+        if response.nil?
+          log_info("Failed to reset index: No response received from Meilisearch.")
+        else
+          log_info("Failed to reset index: #{response.code} - #{response.body}")
+        end
         return
       end
 
