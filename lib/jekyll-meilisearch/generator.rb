@@ -87,7 +87,7 @@ module JekyllMeilisearch
       # Helper method to normalize strings
       normalize = lambda do |str|
         str.tr("/", "-")
-          .squeeze(%r![^a-zA-Z0-9_-]!, "-").squeeze("-")
+          .gsub(%r![^a-zA-Z0-9_-]!, "-").squeeze("-")
           .downcase
           .slice(0, 100)
       end
