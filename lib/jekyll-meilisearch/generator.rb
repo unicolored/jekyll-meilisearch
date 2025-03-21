@@ -191,7 +191,8 @@ module JekyllMeilisearch
 
     def create_index_if_missing(url, index_name, headers)
       Jekyll.logger.info "Checking if index '#{index_name}' exists..."
-      response = HTTParty.get("#{url}/indexes/#{index_name}", :headers => headers, :timeout => 30)
+      clean_url = url.chomp("/")
+      response = HTTParty.get("#{clean_url}/indexes/#{index_name}", :headers => headers, :timeout => 30)
       return if response.success?
 
       if response.code == 404
