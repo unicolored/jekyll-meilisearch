@@ -24,5 +24,9 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'logger', '~> 1.6', '>= 1.6.6'
 
   spec.add_development_dependency 'bundler', '~> 2.0'
+  spec.add_development_dependency "nokogiri", "~> 1.6"
   spec.add_development_dependency 'rake', '~> 13.0'
+  spec.add_development_dependency "rspec", "~> 3.0"
+  spec.add_development_dependency "rubocop-jekyll", "~> 0.12.0"
+  spec.add_development_dependency "typhoeus", ">= 0.7", "< 2.0"
 end
