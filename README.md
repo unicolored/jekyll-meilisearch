@@ -45,13 +45,14 @@ meilisearch:
 
 ## Configuration Options
 - url: The Meilisearch server URL (required).
-- api_key: The Meilisearch API key (required).
+- api_key: The Meilisearch API key (required). Recommended: use a dedicated api key for your index, not the admin one.
 - index_name: The name of the Meilisearch index (optional, defaults to jekyll_documents).
 - collections: A hash of Jekyll collections to index.
-- fields: Array of fields to extract from each document (e.g., title, content, url, date).
-- id_format: How to generate document IDs:
-  - "default": Uses collection-name-number if a number field exists, otherwise sanitizes the document ID.
-  - "path": Uses the document’s URL, sanitized.
+  - fields: Array of fields to extract from each document (e.g., title, content, url, date).
+  - id_format: How to generate document IDs:
+    - "default" | "id": Uses collection-name-number if a number field exists, otherwise sanitizes the document ID.
+    - "url": Uses the document’s URL, sanitized.
+    - fallback: if "number" exists, uses "collection_name" + "number"
 
 Run your Jekyll build:
 
@@ -69,19 +70,59 @@ bundle exec jekyll build --config _config.yml,_config.prod.yml
 Ensure Meilisearch is running and accessible at the configured url.
 Configure your _config.yml with the necessary meilisearch settings.
 Build your site. The plugin will:
-Create the Meilisearch index if it doesn’t exist.
-Fetch existing documents from Meilisearch.
-Delete obsolete documents.
-Index new or updated documents.
-Logs will output to STDOUT with details about the indexing process.
+- Create the Meilisearch index if it doesn’t exist.
+- Fetch existing documents from Meilisearch.
+- Delete obsolete documents.
+- Index new or updated documents.
+- Logs will output to STDOUT with details about the indexing process.
+
+Include the following for adding search to your front :
+```html
+
+<!-- Search Input -->
+<div class="border m-6 mb-6 p-4">
+  <input type="text" id="search" class="border p-2 w-full" placeholder="Rechercher...">
+  <div id="results" class="mt-2 border p-4">Results will appear here.</div>
+</div>
+
+<!-- Meilisearch JS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/meilisearch@0.40.0/dist/bundles/meilisearch.umd.js"></script>
+<script>
+  const meilisearchConfig = {
+    host: "{{ site.meilisearch.url | default: 'http://localhost:7700' }}",
+    apiKey: "{{ site.meilisearch.search_api_key}}"
+  };
+  const client = new MeiliSearch(meilisearchConfig);
+  const index = client.index('{{site.meilisearch.index_name}}');
+
+  document.getElementById('search').addEventListener('input', async (e) => {
+    const query = e.target.value;
+    if (query.length < 2) {
+      document.getElementById('results').innerHTML = '';
+      return;
+    }
+    try {
+      const results = await index.search(query);
+      document.getElementById('results').innerHTML = results.hits
+        .map(hit => `<p><a href="${hit.url}" class="text-blue-500 hover:underline">${hit.title}</a></p>`)
+        .join('');
+    } catch (error) {
+      console.error('Search error:', error);
+      document.getElementById('results').innerHTML = '<p class="text-red-500">Search failed. Please try again.</p>';
+    }
+  });
+</script>
+
+```
 
 ## Requirements
-Ruby >= 2.7  
-Jekyll >= 3.0, < 5.0  
-Meilisearch server (local or hosted)
+- Ruby >= 2.7  
+- Jekyll >= 3.0, < 5.0  
+- Meilisearch server (local or hosted)
 
 ## Dependencies:
-httparty (for HTTP requests)  
+- httparty (for HTTP requests)  
+
 These are automatically installed when you add the gem to your Gemfile.
 
 ## Development
@@ -97,10 +138,7 @@ To contribute or modify the plugin:
 - Push to RubyGems: gem push jekyll-meilisearch-x.x.x.gem
 
 ## License
-This project is licensed under the MIT License. See LICENSE.txt for details.
+This project is licensed under the MIT License.
 
 ## Contributing
 Feel free to open issues or submit pull requests on GitHub.
-
-## Credits
-Developed by @unicolored. Powered by xAI.
