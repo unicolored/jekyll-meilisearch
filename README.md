@@ -12,7 +12,7 @@ A Jekyll plugin that indexes your site’s content into Meilisearch, a fast and 
 Add the gem to your Jekyll site’s Gemfile:
 
 ```shell
-gem "jekyll-meilisearch", "~> 0.1.0"
+gem "jekyll-meilisearch", "~> 0.2.0"
 ```
 
 Then run:
@@ -142,3 +142,12 @@ This project is licensed under the MIT License.
 
 ## Contributing
 Feel free to open issues or submit pull requests on GitHub.
+
+```shell
+bundle install
+# Update version in ./jekyll-meilisearch.gemspec
+# Build the gem
+gem build jekyll-meilisearch.gemspec
+# Push the gem
+gem push jekyll-meilisearch-${version}.gem
+```
