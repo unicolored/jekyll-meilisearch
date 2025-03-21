@@ -23,7 +23,11 @@ module JekyllMeilisearch
 
     # Returns the plugin's config or an empty hash if not set
     def config
-      @config ||= @site.config["meilisearch"] || {}
+      @config ||= begin
+        meilisearch_config = @site.config["meilisearch"] || {}
+        meilisearch_config["url"] = meilisearch_config["url"].chomp("/") if meilisearch_config["url"]
+        meilisearch_config
+      end
     end
 
     def validate_config
@@ -191,8 +195,7 @@ module JekyllMeilisearch
 
     def create_index_if_missing(url, index_name, headers)
       Jekyll.logger.info "Checking if index '#{index_name}' exists..."
-      clean_url = url.chomp("/")
-      response = HTTParty.get("#{clean_url}/indexes/#{index_name}", :headers => headers, :timeout => 30)
+      response = HTTParty.get("#{url}/indexes/#{index_name}", :headers => headers, :timeout => 30)
       return if response.success?
 
       if response.code == 404
