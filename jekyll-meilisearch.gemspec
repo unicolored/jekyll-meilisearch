@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "json", "~> 2.10", ">= 2.10.2"
   spec.add_dependency "logger", "~> 1.6", ">= 1.6.6"
 
-  spec.add_development_dependency "bundler", "~> 2.0"
+  spec.add_development_dependency "bundler"
   spec.add_development_dependency "nokogiri", "~> 1.6"
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "rspec", "~> 3.0"

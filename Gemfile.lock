@@ -236,7 +236,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  bundler (~> 2.0)
+  bundler
   jekyll-meilisearch!
   nokogiri (~> 1.6)
   rake (~> 13.0)
