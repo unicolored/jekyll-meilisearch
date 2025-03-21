@@ -57,6 +57,9 @@ module JekyllMeilisearch
           id_format = collection_settings["id_format"] || :default
 
           collection_docs = collection.docs.map do |doc|
+            # Skip if no front matter
+            next unless doc.data.any?
+
             sanitized_id = generate_id(doc, collection_name, id_format)
             doc_data = {
               "id"      => sanitized_id,
