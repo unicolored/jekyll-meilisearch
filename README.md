@@ -1,5 +1,8 @@
 # Jekyll Meilisearch Plugin
+
 A Jekyll plugin that indexes your site’s content into Meilisearch, a fast and lightweight search engine. This plugin supports incremental indexing, ensuring efficient updates by only syncing changes between your Jekyll site and Meilisearch.
+
+[![Continuous Integration](https://github.com/unicolored/jekyll-meilisearch/actions/workflows/ruby.yml/badge.svg)](https://github.com/unicolored/jekyll-meilisearch/actions/workflows/ruby.yml) [![Gem Version](https://badge.fury.io/rb/jekyll-meilisearch.svg)](https://badge.fury.io/rb/jekyll-meilisearch)
 
 ## Features
 - Indexes Jekyll collections (e.g., posts, pages) into Meilisearch.
@@ -9,22 +12,18 @@ A Jekyll plugin that indexes your site’s content into Meilisearch, a fast and 
 - Pagination support for large sites.
 
 ## Installation
+
 Add the gem to your Jekyll site’s Gemfile:
 
-```shell
-gem "jekyll-meilisearch", "~> 0.2.0"
+```ruby
+gem "jekyll-meilisearch"
 ```
 
-Then run:
+And then add this line to your site's `_config.yml`:
 
-```shell
-bundle install
-```
-
-Alternatively, install it directly:
-
-```shell
-gem install jekyll-meilisearch
+```yml
+plugins:
+  - jekyll-meilisearch
 ```
 
 ## Configuration
@@ -44,15 +43,15 @@ meilisearch:
 ```
 
 ## Configuration Options
-- url: The Meilisearch server URL (required).
-- api_key: The Meilisearch API key (required). Recommended: use a dedicated api key for your index, not the admin one.
-- index_name: The name of the Meilisearch index (optional, defaults to jekyll_documents).
-- collections: A hash of Jekyll collections to index.
-  - fields: Array of fields to extract from each document (e.g., title, content, url, date).
-  - id_format: How to generate document IDs:
-    - "default" | "id": Uses collection-name-number if a number field exists, otherwise sanitizes the document ID.
-    - "url": Uses the document’s URL, sanitized.
-    - fallback: if "number" exists, uses "collection_name" + "number"
+* `url`: The Meilisearch server URL (required).
+* `api_key`: The Meilisearch API key (required). Recommended: use a dedicated api key for your index, not the admin one.
+* `index_name`: The name of the Meilisearch index (optional, defaults to jekyll_documents).
+* `collections`: A hash of Jekyll collections to index.
+  * `fields`: Array of fields to extract from each document (e.g., title, content, url, date).
+  * `id_format`: How to generate document IDs:
+    * "default" | "id": Uses collection-name-number if a number field exists, otherwise sanitizes the document ID.
+    * "url": Uses the document’s URL, sanitized.
+    * fallback: if "number" exists, uses "collection_name" + "number"
 
 Run your Jekyll build:
 
@@ -115,39 +114,20 @@ Include the following for adding search to your front :
 
 ```
 
-## Requirements
-- Ruby >= 2.7  
-- Jekyll >= 3.0, < 5.0  
-- Meilisearch server (local or hosted)
+## Skip development
 
-## Dependencies:
-- httparty (for HTTP requests)  
+Use `disable_in_development: true` if you want to turn off meilisearch indexation when `jekyll.environment == "development"`,
+but don't want to remove the plugin (so you don't accidentally commit the removal). Default value is `false`.
 
-These are automatically installed when you add the gem to your Gemfile.
-
-## Development
-To contribute or modify the plugin:
-
-- Clone the repository: git clone https://github.com/unicolored/jekyll-meilisearch.git cd jekyll-meilisearch
-- Install dependencies: bundle install
-- Make changes and test locally: gem build jekyll-meilisearch.gemspec gem install ./jekyll-meilisearch-0.1.0.gem
-
-## Releasing a New Version
-- Update the version in jekyll-meilisearch.gemspec.
-- Build the gem: gem build jekyll-meilisearch.gemspec
-- Push to RubyGems: gem push jekyll-meilisearch-x.x.x.gem
-
-## License
-This project is licensed under the MIT License.
+```yml
+meilisearch:
+  disable_in_development: true
+```
 
 ## Contributing
-Feel free to open issues or submit pull requests on GitHub.
 
-```shell
-bundle install
-# Update version in ./jekyll-meilisearch.gemspec
-# Build the gem
-gem build jekyll-meilisearch.gemspec
-# Push the gem
-gem push jekyll-meilisearch-${version}.gem
-```
+1. Fork it (https://github.com/unicolored/jekyll-meilisearch/fork)
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create a new Pull Request
