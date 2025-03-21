@@ -84,13 +84,25 @@ module Jekyll
 
     def generate_id(doc, collection_name, id_format)
       case id_format
-      when :default
-        doc.data['number'] ? "#{collection_name}-#{doc.data['number']}" : doc.id.gsub('/', '-')
-                                                                             .gsub(/[^a-zA-Z0-9_-]/, '-').gsub(/-+/, '-').downcase.slice(0, 100)
-      when :path
-        doc.url.gsub('/', '-').downcase.slice(0, 100)
+      when :default | :id
+        doc.id.gsub('/', '-')
+           .gsub(/[^a-zA-Z0-9_-]/, '-')
+           .gsub(/-+/, '-')
+           .downcase
+           .slice(0, 100)
+      when :url
+        doc.url
+           .gsub('/', '-')
+           .gsub(/[^a-zA-Z0-9_-]/, '-')
+           .gsub(/-+/, '-')
+           .downcase
+           .slice(0, 100)
       else
-        doc.id.gsub('/', '-').downcase.slice(0, 100)
+        doc.data['number'] ? "#{collection_name}-#{doc.data['number']}" : doc.id.gsub('/', '-')
+                                                                             .gsub(/[^a-zA-Z0-9_-]/, '-')
+                                                                             .gsub(/-+/, '-')
+                                                                             .downcase
+                                                                             .slice(0, 100)
       end
     end
 

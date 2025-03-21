@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    jekyll-meilisearch (0.1.1)
+    jekyll-meilisearch (0.2.0)
       httparty (~> 0.21)
       jekyll (>= 3.0, < 5.0)
 
