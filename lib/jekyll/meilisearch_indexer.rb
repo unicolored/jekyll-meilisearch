@@ -47,13 +47,13 @@ module Jekyll
 
     def build_documents(site, config)
       documents = []
-      collections_config = config['collections'] || { 'posts' => { 'fields' => ['title', 'content', 'url', 'date'] } }
+      collections_config = config['collections'] || { 'posts' => { 'fields' => %w[title content url date] } }
 
       collections_config.each do |collection_name, collection_settings|
         collection = site.collections[collection_name]
         if collection
           log_info("Processing collection: '#{collection_name}'...")
-          fields_to_index = collection_settings['fields'] || ['title', 'content', 'url', 'date']
+          fields_to_index = collection_settings['fields'] || %w[title content url date]
           id_format = collection_settings['id_format'] || :default
 
           collection_docs = collection.docs.map do |doc|
@@ -64,7 +64,7 @@ module Jekyll
               'url' => doc.url
             }
             fields_to_index.each do |field|
-              next if ['id', 'content', 'url'].include?(field)
+              next if %w[id content url].include?(field)
               value = doc.data[field]
               doc_data[field] = field == 'date' && value ? value.strftime('%Y-%m-%d') : value
             end
@@ -83,26 +83,22 @@ module Jekyll
     end
 
     def generate_id(doc, collection_name, id_format)
+      # Helper method to normalize strings
+      normalize = ->(str) do
+        str.gsub('/', '-')
+           .gsub(/[^a-zA-Z0-9_-]/, '-')
+           .gsub(/-+/, '-')
+           .downcase
+           .slice(0, 100)
+      end
+
       case id_format
-      when :default | :id
-        doc.id.gsub('/', '-')
-           .gsub(/[^a-zA-Z0-9_-]/, '-')
-           .gsub(/-+/, '-')
-           .downcase
-           .slice(0, 100)
+      when :default, :id
+        normalize.call(doc.id)
       when :url
-        doc.url
-           .gsub('/', '-')
-           .gsub(/[^a-zA-Z0-9_-]/, '-')
-           .gsub(/-+/, '-')
-           .downcase
-           .slice(0, 100)
+        normalize.call(doc.url)
       else
-        doc.data['number'] ? "#{collection_name}-#{doc.data['number']}" : doc.id.gsub('/', '-')
-                                                                             .gsub(/[^a-zA-Z0-9_-]/, '-')
-                                                                             .gsub(/-+/, '-')
-                                                                             .downcase
-                                                                             .slice(0, 100)
+        doc.data['number'] ? "#{collection_name}-#{doc.data['number']}" : normalize.call(doc.id)
       end
     end
 
