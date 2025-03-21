@@ -60,7 +60,7 @@ module JekyllMeilisearch
             sanitized_id = generate_id(doc, collection_name, id_format)
             doc_data = {
               "id"      => sanitized_id,
-              "content" => doc.content.strip,
+              "content" => doc.content&.strip,
               "url"     => doc.url,
             }
             fields_to_index.each do |field|
