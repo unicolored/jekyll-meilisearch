@@ -23,7 +23,11 @@ module JekyllMeilisearch
 
     # Returns the plugin's config or an empty hash if not set
     def config
-      @config ||= @site.config["meilisearch"] || {}
+      @config ||= begin
+        meilisearch_config = @site.config["meilisearch"] || {}
+        meilisearch_config["url"] = meilisearch_config["url"].chomp("/") if meilisearch_config["url"]
+        meilisearch_config
+      end
     end
 
     def validate_config
@@ -57,6 +61,9 @@ module JekyllMeilisearch
           id_format = collection_settings["id_format"] || :default
 
           collection_docs = collection.docs.map do |doc|
+            # Skip if no front matter
+            next unless doc.data.any?
+
             sanitized_id = generate_id(doc, collection_name, id_format)
             doc_data = {
               "id"      => sanitized_id,
@@ -157,7 +164,7 @@ module JekyllMeilisearch
       if response&.success?
         Jekyll.logger.info "Delete task queued successfully."
       elsif response
-        Jekyll.logger.info "Failed to delete obsolete documents: #{response.code} - #{response.body}"
+        Jekyll.logger.info "Failed to delete obsolete documents: #{response.code}"
       end
     end
 
@@ -171,6 +178,8 @@ module JekyllMeilisearch
           },
           "indexing documents"
         )
+        Jekyll.logger.info "Response code: #{response&.code}"
+        Jekyll.logger.info "Response response: #{response&.response}"
         if response&.code == 202
           if response.body
             task = JSON.parse(response.body)
@@ -181,7 +190,7 @@ module JekyllMeilisearch
         elsif response.nil?
           Jekyll.logger.info "Failed to queue indexing task: No response received from Meilisearch."
         else
-          Jekyll.logger.info "Failed to queue indexing task: #{response.code} - #{response.body}"
+          Jekyll.logger.info "Failed to queue indexing task: #{response.code}"
         end
       end
     end
@@ -200,10 +209,10 @@ module JekyllMeilisearch
         if response&.success? || response&.code == 202
           Jekyll.logger.info "Index '#{index_name}' created successfully."
         elsif response
-          Jekyll.logger.info "Failed to create index: #{response.code} - #{response.body}"
+          Jekyll.logger.info "Failed to create index: #{response.code}"
         end
       else
-        Jekyll.logger.info "Error checking index: #{response.code} - #{response.body}"
+        Jekyll.logger.info "Error checking index: #{response.code} - #{response.response}"
       end
     end
 
@@ -217,7 +226,7 @@ module JekyllMeilisearch
         if response.nil?
           Jekyll.logger.info "Failed to reset index: No response received from Meilisearch."
         else
-          Jekyll.logger.info "Failed to reset index: #{response.code} - #{response.body}"
+          Jekyll.logger.info "Failed to reset index: #{response.code}"
         end
         return
       end
