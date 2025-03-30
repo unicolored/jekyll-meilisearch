@@ -5,12 +5,13 @@ require_relative "lib/jekyll-meilisearch/version"
 Gem::Specification.new do |spec|
   spec.name = "jekyll-meilisearch"
   spec.version = Jekyll::Meilisearch::VERSION
+  spec.licenses = ["MIT"]
+  spec.summary = "A Jekyll plugin to index site content in Meilisearch."
+  spec.description = "This plugin incrementally indexes Jekyll collections into Meilisearch for fast search capabilities."
   spec.authors = ["unicolored"]
   spec.email = "hello@gilles.dev"
-  spec.summary = "A Jekyll plugin to index site content in Meilisearch."
   spec.homepage = "https://github.com/unicolored/jekyll-meilisearch"
-  spec.description = "This plugin incrementally indexes Jekyll collections into Meilisearch for fast search capabilities."
-  spec.license = "MIT"
+  spec.metadata = { "source_code_uri" => "https://github.com/unicolored/jekyll-meilisearch" }
 
   spec.files = Dir["lib/**/*"]
   spec.extra_rdoc_files = Dir["README.md"]
