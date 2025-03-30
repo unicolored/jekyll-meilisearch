@@ -164,7 +164,7 @@ module JekyllMeilisearch
       if response&.success?
         Jekyll.logger.info "Delete task queued successfully."
       elsif response
-        Jekyll.logger.info "Failed to delete obsolete documents: #{response.code} - #{response.body}"
+        Jekyll.logger.info "Failed to delete obsolete documents: #{response.code}"
       end
     end
 
@@ -188,7 +188,7 @@ module JekyllMeilisearch
         elsif response.nil?
           Jekyll.logger.info "Failed to queue indexing task: No response received from Meilisearch."
         else
-          Jekyll.logger.info "Failed to queue indexing task: #{response.code} - #{response.body}"
+          Jekyll.logger.info "Failed to queue indexing task: #{response.code}"
         end
       end
     end
@@ -207,10 +207,10 @@ module JekyllMeilisearch
         if response&.success? || response&.code == 202
           Jekyll.logger.info "Index '#{index_name}' created successfully."
         elsif response
-          Jekyll.logger.info "Failed to create index: #{response.code} - #{response.body}"
+          Jekyll.logger.info "Failed to create index: #{response.code}"
         end
       else
-        Jekyll.logger.info "Error checking index: #{response.code} - #{response.body}"
+        Jekyll.logger.info "Error checking index: #{response.code} - #{response.response}"
       end
     end
 
@@ -224,7 +224,7 @@ module JekyllMeilisearch
         if response.nil?
           Jekyll.logger.info "Failed to reset index: No response received from Meilisearch."
         else
-          Jekyll.logger.info "Failed to reset index: #{response.code} - #{response.body}"
+          Jekyll.logger.info "Failed to reset index: #{response.code}"
         end
         return
       end
