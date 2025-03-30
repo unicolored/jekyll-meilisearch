@@ -2,7 +2,7 @@
 
 A Jekyll plugin that indexes your site’s content into Meilisearch, a fast and lightweight search engine. This plugin supports incremental indexing, ensuring efficient updates by only syncing changes between your Jekyll site and Meilisearch.
 
-[![Continuous Integration](https://github.com/unicolored/jekyll-meilisearch/actions/workflows/ruby.yml/badge.svg)](https://github.com/unicolored/jekyll-meilisearch/actions/workflows/ruby.yml) [![Gem Version](https://badge.fury.io/rb/jekyll-meilisearch.svg)](https://badge.fury.io/rb/jekyll-meilisearch)
+[![Gem Version](https://badge.fury.io/rb/jekyll-meilisearch.svg)](https://badge.fury.io/rb/jekyll-meilisearch)
 
 ## Features
 - Indexes Jekyll collections (e.g., posts, pages) into Meilisearch.
