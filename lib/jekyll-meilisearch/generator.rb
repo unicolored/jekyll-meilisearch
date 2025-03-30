@@ -178,6 +178,8 @@ module JekyllMeilisearch
           },
           "indexing documents"
         )
+        Jekyll.logger.info "Response code: #{response&.code}"
+        Jekyll.logger.info "Response response: #{response&.response}"
         if response&.code == 202
           if response.body
             task = JSON.parse(response.body)
