@@ -20,8 +20,8 @@
 
 title: "Jekyll 🩷 Meilisearch"
 description: "Plugin for Jekyll"
-baseurl: "/jekyll-meilisearch" # the subpath of your site, e.g. /blog
-url: "https://unicolo.red/jekyll-meilisearch" # the base hostname & protocol for your site, e.g. http://example.com
+baseurl: "/jekyll-meilisearch"
+url: "https://unicolo.red"
 github_username:  unicolored
 
 # Build settings
