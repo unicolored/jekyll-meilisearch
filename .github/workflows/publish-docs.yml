@@ -1,0 +1,51 @@
+name: Publish docs to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      JEKYLL_ENV: production
+      NODE_ENV: development
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Build Jekyll
+        run: |
+          cd docs
+          bundle install
+          bundle exec jekyll build --config _config.yml
+
+      - name: Check _site directory
+        run: |
+          if [ ! -d "_site" ]; then
+            echo "Error: _site directory not found!"
+            exit 1
+          fi
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: docs/_site
+          branch: gh-pages
