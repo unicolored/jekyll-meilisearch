@@ -39,8 +39,8 @@ jobs:
 
       - name: Check _site directory
         run: |
-          if [ ! -d "_site" ]; then
-            echo "Error: _site directory not found!"
+          if [ ! -d "docs/_site" ]; then
+            echo "Error: docs/_site directory not found!"
             exit 1
           fi
 
