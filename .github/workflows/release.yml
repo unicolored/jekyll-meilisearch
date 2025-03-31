@@ -2,7 +2,7 @@ name: Release Gem
 
 on:
   push:
-    branches: ["main"]
+    branches: ["none"]
     paths: ["lib/**/version.rb"]
 
 jobs:

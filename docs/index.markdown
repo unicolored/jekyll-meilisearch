@@ -1,4 +1,7 @@
-# Jekyll Meilisearch Plugin
+---
+layout: page
+title: Jekyll Meilisearch Plugin
+---
 
 A Jekyll plugin that indexes your site’s content into Meilisearch, a fast and lightweight search engine. This plugin supports incremental indexing, ensuring efficient updates by only syncing changes between your Jekyll site and Meilisearch.
 
@@ -47,11 +50,11 @@ meilisearch:
 * `api_key`: The Meilisearch API key (required). Recommended: use a dedicated api key for your index, not the admin one.
 * `index_name`: The name of the Meilisearch index (optional, defaults to jekyll_documents).
 * `collections`: A hash of Jekyll collections to index.
-  * `fields`: Array of fields to extract from each document (e.g., title, content, url, date).
-  * `id_format`: How to generate document IDs:
-    * "default" | "id": Uses collection-name-number if a number field exists, otherwise sanitizes the document ID.
-    * "url": Uses the document’s URL, sanitized.
-    * fallback: if "number" exists, uses "collection_name" + "number"
+    * `fields`: Array of fields to extract from each document (e.g., title, content, url, date).
+    * `id_format`: How to generate document IDs:
+        * "default" | "id": Uses collection-name-number if a number field exists, otherwise sanitizes the document ID.
+        * "url": Uses the document’s URL, sanitized.
+        * fallback: if "number" exists, uses "collection_name" + "number"
 
 Run your Jekyll build:
 
