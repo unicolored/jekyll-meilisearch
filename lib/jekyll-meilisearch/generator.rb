@@ -14,13 +14,22 @@ module JekyllMeilisearch
       end
 
       # Skip indexing unless relevant files have changed in incremental mode
-      return unless should_index?
+      unless should_index?
+        Jekyll.logger.info "Jekyll Meilisearch:", "No relevant changes detected. Skipping indexing."
+        return
+      end
 
       Jekyll.logger.info "Starting Meilisearch incremental indexing..."
       return unless validate_config
 
-      @documents = build_documents
-      sync_with_meilisearch
+      begin
+        @documents = build_documents
+        sync_with_meilisearch
+      rescue StandardError => e
+        Jekyll.logger.error "Jekyll Meilisearch:", "Indexing failed due to an error: #{e.message}"
+        Jekyll.logger.info "Jekyll Meilisearch:", "Skipping Meilisearch indexing, but continuing Jekyll build."
+        nil
+      end
     end
 
     private
@@ -86,7 +95,6 @@ module JekyllMeilisearch
           id_format = collection_settings["id_format"] || :default
 
           collection_docs = collection.docs.map do |doc|
-            # Skip if no front matter
             next unless doc.data.any?
 
             sanitized_id = generate_id(doc, collection_name, id_format)
@@ -159,8 +167,7 @@ module JekyllMeilisearch
       loop do
         response = attempt_request(
           lambda {
-            HTTParty.get("#{url}/indexes/#{index_name}/documents?limit=#{limit}&offset=#{offset}", :headers => headers,
-                                                                                                   :timeout => 30)
+            HTTParty.get("#{url}/indexes/#{index_name}/documents?limit=#{limit}&offset=#{offset}", :headers => headers, :timeout => 30)
           },
           "fetching documents"
         )
@@ -204,7 +211,6 @@ module JekyllMeilisearch
           "indexing documents"
         )
         Jekyll.logger.info "Response code: #{response&.code}"
-        Jekyll.logger.info "Response response: #{response&.response}"
         if response&.code == 202
           if response.body
             task = JSON.parse(response.body)
