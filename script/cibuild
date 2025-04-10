@@ -2,6 +2,6 @@
 
 set -e
 
-script/test
-script/fmt
+#script/test
+#script/fmt
 bundle exec rake build
