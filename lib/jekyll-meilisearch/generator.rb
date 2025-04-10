@@ -36,22 +36,30 @@ module JekyllMeilisearch
 
     # Determine if indexing should occur based on changed files
     def should_index?
-      # If not in incremental mode or first build, always index
+      # Always index if not in incremental mode (full build)
       return true unless @site.incremental?
 
       # Get the collections to monitor from config
       collections_config = config["collections"] || { "posts" => { "fields" => %w(title content url date) } }
       monitored_collections = collections_config.keys
 
-      # Check if any changed files belong to the monitored collections
-      changed_files = @site.regenerator.modified_files
-      return false if changed_files.empty?
+      # Check if regenerator supports modified_files (Jekyll version compatibility)
+      if @site.regenerator.respond_to?(:modified_files)
+        changed_files = @site.regenerator.modified_files
+        return false if changed_files.empty?
 
-      changed_files.any? do |file|
-        # Extract the relative path and check if it matches a collection
-        relative_path = file.relative_path.sub(%r!^/!, "")
-        collection_name = relative_path.split("/").first
-        monitored_collections.include?(collection_name)
+        changed_files.any? do |file|
+          relative_path = file.relative_path.sub(%r!^/!, "")
+          collection_name = relative_path.split("/").first
+          is_in_collection = @site.collections.key?(collection_name) && monitored_collections.include?(collection_name)
+          Jekyll.logger.info "Jekyll Meilisearch:",
+                             "File: #{relative_path}, Collection: #{collection_name}, In monitored collection? #{is_in_collection}"
+          is_in_collection
+        end
+      else
+        # Fallback: Warn and assume indexing is needed if we can’t check changes
+        Jekyll.logger.warn "Jekyll Meilisearch:", "Incremental change detection not supported in this Jekyll version. Indexing all documents."
+        true
       end
     end
 
