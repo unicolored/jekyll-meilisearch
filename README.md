@@ -72,8 +72,9 @@ Build your site. The plugin will:
 - Create the Meilisearch index if it doesn’t exist.
 - Fetch existing documents from Meilisearch.
 - Delete obsolete documents.
-- Index new or updated documents.
+- Index only new or updated collections defined in the config
 - Logs will output to STDOUT with details about the indexing process.
+- Skip indexing if the meilisearch host is unavailable
 
 Include the following for adding search to your front :
 ```html
