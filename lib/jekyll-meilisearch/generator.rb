@@ -12,6 +12,10 @@ module JekyllMeilisearch
         Jekyll.logger.info "Jekyll Meilisearch:", "Skipping meilisearch indexation in development"
         return
       end
+
+      # Skip indexing unless relevant files have changed in incremental mode
+      return unless should_index?
+
       Jekyll.logger.info "Starting Meilisearch incremental indexing..."
       return unless validate_config
 
@@ -20,6 +24,27 @@ module JekyllMeilisearch
     end
 
     private
+
+    # Determine if indexing should occur based on changed files
+    def should_index?
+      # If not in incremental mode or first build, always index
+      return true unless @site.incremental?
+
+      # Get the collections to monitor from config
+      collections_config = config["collections"] || { "posts" => { "fields" => %w(title content url date) } }
+      monitored_collections = collections_config.keys
+
+      # Check if any changed files belong to the monitored collections
+      changed_files = @site.regenerator.modified_files
+      return false if changed_files.empty?
+
+      changed_files.any? do |file|
+        # Extract the relative path and check if it matches a collection
+        relative_path = file.relative_path.sub(%r!^/!, "")
+        collection_name = relative_path.split("/").first
+        monitored_collections.include?(collection_name)
+      end
+    end
 
     # Returns the plugin's config or an empty hash if not set
     def config
